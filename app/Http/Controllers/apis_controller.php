@@ -54,6 +54,7 @@ class apis_controller extends Controller
             "message" => $str
         ]);
     }
+
     function splitValues(){
         $nb = 100;
         $flag = 0;
@@ -111,6 +112,30 @@ class apis_controller extends Controller
         return response()->json([
             "status" => 1,
             "message" => str_replace($numbers[0], $binarys, $string)
+        ]);
+    }
+
+    function prefixCalc($string){
+        $array = explode(" ", $string);
+        $total = (int)$array[1];
+
+        for($i = 2 ; $i < count($array) ; $i++){
+            if($array[0] == "+"){
+                $total += (int)$array[$i];
+            }else if($array[0] == "-"){
+                $total -= (int)$array[$i];
+            }else if($array[0] == "*"){
+                $total *= (int)$array[$i];
+            }else if($array[0] == "/"){
+                $total /= (int)$array[$i];
+            }else if($array[0] == "%"){
+                $total = $total % (int)$array[$i];
+            }
+        }
+
+        return response()->json([
+            "status" => 1,
+            "message" => $total
         ]);
     }
 }
