@@ -6,5 +6,50 @@ use Illuminate\Http\Request;
 
 class apis_controller extends Controller
 {
-    
+    function sortString(){
+        $str = "6jnM31Q";
+
+        $array = str_split($str);
+        $lower = [];
+        $upper = [];
+        $nums = [];
+        for ($i = 0; $i < strlen($str); $i++) {
+            if($array[$i] >= 'a' && $array[$i]<= 'z'){
+                $lower[] = ord($array[$i])-97;
+            }else if($array[$i] >= 'A' && $array[$i] <= 'Z'){
+                $upper[] = ord($array[$i])+32-97;
+            }else{
+                $nums[] = $array[$i];
+            }
+        }
+        sort($lower);
+        sort($upper);
+        sort($nums);
+
+        for($i=0,$x=0;$i<25;$i++){
+            for($j=0;$j<count($lower);$j++){
+                if($lower[$j] == $i){
+                    $array[$x] = chr($lower[$j]+97);
+                    $x++;
+                }
+            }
+            for($j=0;$j<count($upper);$j++){
+                if($upper[$j] == $i){
+                    $array[$x] = chr($upper[$j]+97-32);
+                    $x++;
+                }
+            }
+        }
+
+        for($x,$i=0;$x < count($array);$x++,$i++){
+            $array[$x] = $nums[$i];
+        }
+
+        $str = implode($array);
+
+        return response()->json([
+            "status" => 1,
+            "message" => $str
+        ]);
+    }
 }
