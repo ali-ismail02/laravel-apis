@@ -6,14 +6,23 @@ use Illuminate\Http\Request;
 
 class apis_controller extends Controller
 {
-    function sortString(){
-        $str = "6jnM31Q";
+
+    // function to sort a string in the following format aAbB12
+    function sortString($str){
+
+        if(!preg_match("/^[a-zA-Z0-9]+$/",$str)){
+            return response()->json([
+                "status" => 0,
+                "message" => "Wrong format, zabet 5atak/5atek!!!"
+            ]);
+        }
 
         $array = str_split($str);
         $lower = [];
         $upper = [];
         $nums = [];
 
+        // splitting string into 3 arrays; uppercase, lowercase and nbs arrays
         for ($i = 0; $i < strlen($str); $i++) {
             if($array[$i] >= 'a' && $array[$i]<= 'z'){
                 $lower[] = ord($array[$i])-97;
@@ -28,6 +37,7 @@ class apis_controller extends Controller
         sort($upper);
         sort($nums);
 
+        // filling the main array with sorted characters
         for($i=0,$x=0;$i<25;$i++){
             for($j=0;$j<count($lower);$j++){
                 if($lower[$j] == $i){
@@ -43,6 +53,7 @@ class apis_controller extends Controller
             }
         }
 
+        // adding the sorted numbers to the end of the array
         for($x,$i=0;$x < count($array);$x++,$i++){
             $array[$x] = $nums[$i];
         }
@@ -55,10 +66,26 @@ class apis_controller extends Controller
         ]);
     }
 
-    function splitValues(){
-        $nb = 100;
+
+    // function to split a number into its full values????
+    function splitValues($nb){
+
+        if(!preg_match("/^\d+$/",$nb)){
+            return response()->json([
+                "status" => 0,
+                "message" => "bade bs 2r2am. face palm"
+            ]);
+        }
+
         $flag = 0;
         $array = [];
+
+        if($nb == 0){
+            return response()->json([
+                "status" => 1,
+                "message" => [0]
+            ]);
+        }
 
         if($nb < 0){
             $nb = -$nb;
@@ -73,6 +100,7 @@ class apis_controller extends Controller
 
         $array = array_reverse($array);
 
+        // adding 0s to the arrays' elements according to the index of the element
         for($i = count($array)-1,$j=0; $i>=0;$i--,$j++){
             if($flag){
                 $array[$j] = -($array[$j] * pow(10,$i));
@@ -85,8 +113,18 @@ class apis_controller extends Controller
         ]);
     }
 
+
+    // functions to replace numbers in a string with their binary equivelent
     function replaceWithBinary($string) {
 
+        if(!preg_match("/^[a-zA-Z0-9\s]+$/",$string)){
+            return response()->json([
+                "status" => 0,
+                "message" => "Wrong format, zabet 5atak/5atek!!!"
+            ]);
+        }
+
+        // this function turns a string of integers into a string of 0s and 1s (binary format of the numbers)
         function parseBinary($number) {
     
             $number = (int)$number;
@@ -98,7 +136,9 @@ class apis_controller extends Controller
                 $binary[] = $number % 2;
                 $number = (int)($number / 2);
             }
+
             $binary = array_reverse($binary);
+            
             return implode($binary);
         }
 
@@ -115,7 +155,17 @@ class apis_controller extends Controller
         ]);
     }
 
+
+    // function that calculates total of a prefix and operands in an array
     function prefixCalc($string){
+
+        if(!preg_match('/^[\+\-\*%\/]{1}\s{1}\d+\s{1}\d+( \d+)*$/', $string)){
+            return response()->json([
+                "status" => 0,
+                "message" => "Wrong format, zabet 5atak/5atek!!!"
+            ]);
+        }
+
         $array = explode(" ", $string);
         $total = (int)$array[1];
 
@@ -127,7 +177,7 @@ class apis_controller extends Controller
             }else if($array[0] == "*"){
                 $total *= (int)$array[$i];
             }else if($array[0] == "/"){
-                $total /= (int)$array[$i];
+                $total = $total / (int)$array[$i];
             }else if($array[0] == "%"){
                 $total = $total % (int)$array[$i];
             }
